@@ -3,7 +3,7 @@ name: Deploy AI Agent to S3
 on:
   push:
     branches:
-      - master
+      - main  # workflow triggers only on main branch
 
 jobs:
   deploy:
@@ -13,13 +13,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Configure AWS
+    - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-access-key-id: ${{ AKIAVUAZRFKU3AYXSUMU }}
-        aws-secret-access-key: ${{ RnsGkmBcIzOIECsyyNg9k+tN836iq6YEkjd1PaE }}
-        aws-region: ${{ ap-southeast-1 }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Deploy to S3
       run: |
-        aws s3 sync . s3://${{ new-ai-bucket1234 }} --delete
+        aws s3 sync . s3://${{ secrets.S3_BUCKET }} --delete
