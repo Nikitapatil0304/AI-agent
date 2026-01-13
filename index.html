@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Advanced AI Agent 🤖</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <h1>🤖 Smart AI Agent</h1>
+
+  <select id="mode">
+    <option value="normal">Normal AI</option>
+    <option value="shinchan">Shinchan 😄</option>
+    <option value="doraemon">Doraemon 🧠</option>
+  </select>
+
+  <textarea id="input" placeholder="Speak, type or upload file..."></textarea>
+
+  <input type="file" id="fileInput">
+
+  <div class="buttons">
+    <button onclick="runAgent()">Ask AI</button>
+    <button onclick="startVoice()">🎤 Voice</button>
+    <button onclick="clearMemory()">🧠 Clear</button>
+  </div>
+
+  <div id="output"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
