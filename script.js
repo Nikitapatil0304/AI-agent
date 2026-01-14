@@ -1,63 +1,80 @@
-const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; // use GitHub Secrets while deploy
+const GEMINI_API_KEY = "AIzaSyDXv8yjEEmpB35ws9VUHahgOJ0Xd1wsX8I";
 
-let memory = JSON.parse(localStorage.getItem("ai_mem") || "[]");
+let memory = JSON.parse(localStorage.getItem("ai_memory") || "[]");
 
-/* 🎤 Voice */
+/* 🎤 Voice Input */
 function startVoice() {
-  const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Voice not supported in this browser");
+    return;
+  }
+
+  const rec = new SpeechRecognition();
   rec.lang = "en-US";
+
   rec.onresult = e => {
-    document.getElementById("input").value = e.results[0][0].transcript;
+    document.getElementById("input").value =
+      e.results[0][0].transcript;
   };
+
   rec.start();
 }
 
-/* 📄 File Upload */
-document.getElementById("fileInput").addEventListener("change", e => {
-  const reader = new FileReader();
-  reader.onload = () => {
-    document.getElementById("input").value = reader.result.slice(0, 1000);
-  };
-  reader.readAsText(e.target.files[0]);
-});
-
-/* 🤖 GEMINI AI AGENT */
+/* 🤖 AI Agent */
 async function runAgent() {
-  const input = document.getElementById("input").value;
-  const mode = document.getElementById("mode").value;
+  const input = document.getElementById("input").value.trim();
+  const output = document.getElementById("output");
 
-  let prompt = input;
+  if (!input) {
+    output.innerText = "Please type something 🙂";
+    return;
+  }
 
-  if (mode === "shinchan")
-    prompt = "Explain in Shinchan funny style: " + input;
+  output.innerText = "Thinking... 🤔";
 
-  if (mode === "doraemon")
-    prompt = "Explain like Doraemon using future gadgets: " + input;
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: input }] }]
+        })
+      }
+    );
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
-    }
-  );
+    const data = await res.json();
 
-  const data = await res.json();
-  const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
+    const answer =
+      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No response from AI 😢";
 
-  memory.push(input);
-  if (memory.length > 10) memory.shift();
-  localStorage.setItem("ai_mem", JSON.stringify(memory));
+    memory.push(input);
+    if (memory.length > 5) memory.shift();
+    localStorage.setItem("ai_memory", JSON.stringify(memory));
 
-  document.getElementById("output").innerHTML =
-    `<b>AI Response:</b><br>${answer}<hr>
-     <b>Memory:</b><br>${memory.join("<br>")}`;
+    output.innerHTML = `
+      <b>🤖 AI Response:</b><br><br>
+      ${answer}
+      <hr>
+      <b>🧠 Memory:</b><br>
+      ${memory.join("<br>")}
+    `;
+  } catch (err) {
+    console.error(err);
+    output.innerText = "Error connecting to AI ❌";
+  }
 }
 
+/* 🧠 Clear Memory */
 function clearMemory() {
+  memory = [];
   localStorage.clear();
-  document.getElementById("output").innerText = "Memory cleared 🧠";
+  document.getElementById("output").innerText =
+    "Memory cleared 🧠";
 }
+

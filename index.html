@@ -1,33 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Advanced AI Agent 🤖</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Cute AI Agent 🤖</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <div class="app">
-  <h1>🤖 Smart AI Agent</h1>
+  <h1>🤖 Cute AI Agent</h1>
 
-  <select id="mode">
-    <option value="normal">Normal AI</option>
-    <option value="shinchan">Shinchan 😄</option>
-    <option value="doraemon">Doraemon 🧠</option>
-  </select>
-
-  <textarea id="input" placeholder="Speak, type or upload file..."></textarea>
-
-  <input type="file" id="fileInput">
-
-  <div class="buttons">
-    <button onclick="runAgent()">Ask AI</button>
-    <button onclick="startVoice()">🎤 Voice</button>
-    <button onclick="clearMemory()">🧠 Clear</button>
+  <!-- Stickers only -->
+  <div class="characters">
+    <img src="https://i.imgur.com/9Xnqk6X.png" alt="Shinchan">
+    <img src="https://i.imgur.com/oYiTqum.png" alt="Doraemon">
   </div>
 
-  <div id="output"></div>
+  <textarea id="input" placeholder="Ask anything to AI... 😊"></textarea>
+
+  <button onclick="runAgent()">Ask AI</button>
+  <button onclick="startVoice()">🎤 Voice</button>
+  <button onclick="clearMemory()">🧠 Clear Memory</button>
+
+  <div id="output">AI response will appear here...</div>
 </div>
 
 <script src="script.js"></script>
 </body>
 </html>
+
