@@ -1,12 +1,11 @@
-const GEMINI_API_KEY = "AIzaSyDXv8yjEEmpB35ws9VUHahgOJ0Xd1wsX8I";
+// 🔑 Add your Gemini API key here
+const GEMINI_API_KEY ="AIzaSyDXv8yjEEmpB35ws9VUHahgOJ0Xd1wsX8I";
 
 let memory = JSON.parse(localStorage.getItem("ai_memory") || "[]");
 
-/* 🎤 Voice Input */
+/* Voice Input */
 function startVoice() {
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     alert("Voice not supported in this browser");
     return;
@@ -16,14 +15,13 @@ function startVoice() {
   rec.lang = "en-US";
 
   rec.onresult = e => {
-    document.getElementById("input").value =
-      e.results[0][0].transcript;
+    document.getElementById("input").value = e.results[0][0].transcript;
   };
 
   rec.start();
 }
 
-/* 🤖 AI Agent */
+/* Run AI Agent */
 async function runAgent() {
   const input = document.getElementById("input").value.trim();
   const output = document.getElementById("output");
@@ -41,40 +39,31 @@ async function runAgent() {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: input }] }]
-        })
+        body: JSON.stringify({ contents: [{ parts: [{ text: input }] }] })
       }
     );
 
     const data = await res.json();
 
-    const answer =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "No response from AI 😢";
+    const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || "AI did not return a response 😢";
 
-    memory.push(input);
-    if (memory.length > 5) memory.shift();
+    memory.push("You: " + input);
+    memory.push("AI: " + answer);
+    if (memory.length > 20) memory.shift(); // keep last 10 exchanges
     localStorage.setItem("ai_memory", JSON.stringify(memory));
 
-    output.innerHTML = `
-      <b>🤖 AI Response:</b><br><br>
-      ${answer}
-      <hr>
-      <b>🧠 Memory:</b><br>
-      ${memory.join("<br>")}
-    `;
+    output.innerHTML = memory.join("<br>");
+    document.getElementById("input").value = "";
   } catch (err) {
     console.error(err);
     output.innerText = "Error connecting to AI ❌";
   }
 }
 
-/* 🧠 Clear Memory */
+/* Clear memory */
 function clearMemory() {
   memory = [];
   localStorage.clear();
-  document.getElementById("output").innerText =
-    "Memory cleared 🧠";
+  document.getElementById("output").innerText = "Memory cleared 🧠";
 }
 
