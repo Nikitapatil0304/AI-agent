@@ -3,7 +3,7 @@ name: Deploy AI Agent to S3
 on:
   push:
     branches:
-      - main  # workflow triggers only on main branch
+      - master  # workflow triggers only on main branch
 
 jobs:
   deploy:
